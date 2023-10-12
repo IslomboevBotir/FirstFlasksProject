@@ -1,9 +1,10 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Text, Date, Boolean, Float, text, func
 from serializer import ProjectSchema
 import pandas as pd
 from datetime import datetime
+
 
 app = Flask(__name__)
 
@@ -77,8 +78,7 @@ def most_expensive_unit():
     if query:
         result_data = project_to_dict(query)
         return jsonify({"most_expensive_unit": result_data})
-    else:
-        return jsonify({"message": "No projects found"})
+    return jsonify({"message": "No projects found"})
 
 
 @app.route('/largest_area_unit')
@@ -92,8 +92,7 @@ def largest_area_unit():
     if query:
         result_data = project_to_dict(query)
         return jsonify({"largest_area_unit": result_data})
-    else:
-        return jsonify({"message": "No projects found"})
+    return jsonify({"message": "No projects found"})
 
 
 @app.route('/all_villa')
@@ -107,8 +106,7 @@ def all_vila():
     if query:
         result_data = [{"unit": unit, "villa_count": villa_count} for unit, villa_count in query]
         return jsonify({"all_vila": result_data})
-    else:
-        return jsonify({"message": "No projects found"})
+    return jsonify({"message": "No projects found"})
 
 
 @app.route('/projects')
@@ -127,12 +125,16 @@ def projects():
         result_data = [{"project": unit, "utype": utype, "projects_count": projects_count}
                        for unit, utype, projects_count in query]
         return jsonify({"all_projects": result_data})
-    else:
-        return jsonify({"message": "No projects found"})
+    return jsonify({"message": "No projects found"})
 
 
-@app.route('/search/<unit>')
-def search(unit):
+@app.route('/search', methods=['GET'])
+def search_get():
+
+    unit = request.args.get('unit', '')
+
+    if not unit:
+        return jsonify({"message": "Parameter 'unit' is required"})
     query = (
         db.session.query(
                         DataBaseProject.unit,
@@ -148,8 +150,33 @@ def search(unit):
         result_data = [{"project": unit, "utype": utype, "beds": beds, "area": area, "price": price, "date": date}
                        for unit, utype, beds, area, price, date in query]
         return jsonify({"project": result_data})
-    else:
-        return jsonify({"message": "No projects found"})
+    return jsonify({"message": "No projects found"})
+
+
+@app.route('/search', methods=['POST'])
+def search_post():
+
+    data = request.get_json()
+    unit = data.get('unit', '')
+
+    if not unit:
+        return jsonify({"message": "Parameter 'unit' is required"})
+    query = (
+        db.session.query(
+            DataBaseProject.unit,
+            DataBaseProject.utype,
+            DataBaseProject.beds,
+            DataBaseProject.area,
+            DataBaseProject.price,
+            DataBaseProject.date
+        )
+        .filter(DataBaseProject.unit.ilike(f'%{unit}%'))
+    )
+    if query:
+        result_data = [{"project": unit, "utype": utype, "beds": beds, "area": area, "price": price, "date": date}
+                       for unit, utype, beds, area, price, date in query]
+        return jsonify({"project": result_data})
+    return jsonify({"message": "No projects found"})
 
 
 def project_to_dict(project):
