@@ -1,10 +1,8 @@
-from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Text, Date, Boolean, Float, text, func
+from flask import jsonify, request
+from sqlalchemy import text, func
 from flaskr.csv.treatment import parse_in_data_base
 from serializer import ProjectSchema
 import pandas as pd
-from datetime import datetime
 from models import DataBaseProject
 from database import db, app
 
