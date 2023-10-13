@@ -1,23 +1,8 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from flask_sqlalchemy import SQLAlchemy
 
-DATABASE_NAME = 'projectdb'
+from settings import app
 
-engine = create_engine(f'postgresql:///{DATABASE_NAME}')
-session = sessionmaker(bind=engine)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://projectdb:projectdb@localhost/projectdb'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-Base = declarative_base()
-
-
-def create_db():
-    passf
-
-
-
-
-    # database="projectdb",
-    # host="localhost",
-    # user="projectdb",
-    # password="projectdb",
-    # port="5432")
+db = SQLAlchemy(app)

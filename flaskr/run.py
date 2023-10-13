@@ -4,30 +4,8 @@ from sqlalchemy import Column, Integer, String, Text, Date, Boolean, Float, text
 from serializer import ProjectSchema
 import pandas as pd
 from datetime import datetime
-
-
-app = Flask(__name__)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://projectdb:projectdb@localhost/projectdb'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-
-
-class DataBaseProject(db.Model):
-    __tablename__ = 'project'
-    id = db.Column(db.Integer, primary_key=True)
-    cid = db.Column(db.Integer)
-    unit = db.Column(db.String(255))
-    w_id = db.Column(db.Integer, unique=True)
-    utype = db.Column(db.String(255))
-    beds = db.Column(db.Integer)
-    area = db.Column(db.Float)
-    price = db.Column(db.Integer)
-    date = db.Column(db.Date)
-    is_mode = db.Column(db.Boolean)
-    is_del = db.Column(db.Boolean)
-
+from models import DataBaseProject
+from database import db, app
 
 project_schema = ProjectSchema()
 
