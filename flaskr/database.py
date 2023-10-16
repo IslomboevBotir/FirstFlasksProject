@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-
 from settings import app
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://projectdb:projectdb@localhost/projectdb'
